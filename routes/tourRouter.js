@@ -1,5 +1,7 @@
 const express = require('express');
 const Tour = require('../tour/tour.contoller');
+const auth = require('../middlewares/auth');
+const restrictTo = require('../middlewares/restrictTo');
 
 const router = express.Router();
 router.param('id', (req, res, next, value) => {
@@ -8,9 +10,9 @@ router.param('id', (req, res, next, value) => {
 });
 
 router.get('/', Tour.getAll);
-router.get('/:id', Tour.getOne);
-router.post('/', Tour.create);
-router.delete('/:id', Tour.delete);
-router.patch('/', Tour.patch);
+router.get('/:id', auth, Tour.getOne);
+router.post('/', auth, restrictTo('admin'), Tour.create);
+router.delete('/:id', auth, restrictTo('admin'), Tour.delete);
+router.patch('/', auth, restrictTo('admin'), Tour.patch);
 
 module.exports = router;

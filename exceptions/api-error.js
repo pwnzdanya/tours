@@ -12,4 +12,12 @@ module.exports = class ApiError extends Error {
   static BadRequest(message, errors = []) {
     return new ApiError(400, message, errors);
   }
+
+  static Forbidden() {
+    return new ApiError(403, 'You do not have permission to perform this action');
+  }
+
+  static NotFound(message, errors = []) {
+    return new ApiError(404, message, errors);
+  }
 };
