@@ -67,9 +67,31 @@ class AuthService {
       .digest('hex');
 
     const passwordResetExpires = Date.now() + 10 * 60 * 1000;
-    await User.update({ passwordResetToken }, { where: { email } });
-    await User.update({ passwordResetExpires }, { where: { email } });
+
+    user.passwordResetToken = passwordResetToken;
+    user.passwordResetExpires = passwordResetExpires;
+    await user.save();
     return resetToken;
+  }
+
+  async resetPassword(token, password) {
+    console.log(token);
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    console.log(hashedToken);
+    const user = await User.findOne({ where: { passwordResetToken: hashedToken } });
+    console.log(user);
+    if (!user) {
+      throw ApiError.BadRequest();
+    }
+
+    if (user.passwordResetExpires < Date.now()) {
+      throw ApiError.BadRequest();
+    }
+    user.password = await bcrypt.hash(password, 6);
+    user.passwordResetToken = null;
+    user.passwordResetExpires = null;
+    await user.save();
+    return this.getToken(user.id);
   }
 }
 

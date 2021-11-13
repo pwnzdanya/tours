@@ -2,13 +2,16 @@ const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
+const xss = require('xss');
 const router = require('./routes/router');
 const sequelize = require('./db');
 const errorMiddleware = require('./middlewares/error');
 
 const app = express();
-
+app.use(xss());
 app.use(express.json());
+app.use(helmet());
 app.use(cookieParser());
 app.use('/api/v1', router);
 app.all('*', (req, res) => {

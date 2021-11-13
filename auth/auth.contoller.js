@@ -6,10 +6,11 @@ class AuthContoller {
   async signUp(req, res, next) {
     try {
       const newUser = await UserService.create(req.body);
+      const userRes = UserService.buildUserResponse(newUser);
       const cookieOptions = AuthService.createCookieOptions();
       res.cookie('jwt', newUser.token, cookieOptions);
       res.status(201).json({
-        data: newUser,
+        data: userRes,
       });
     } catch (e) {
       next(e);
@@ -20,10 +21,11 @@ class AuthContoller {
     try {
       const { email, password } = req.body;
       const user = await AuthService.signIn(email, password);
+      const userRes = UserService.buildUserResponse(user);
       const cookieOptions = AuthService.createCookieOptions();
       res.cookie('jwt', user.token, cookieOptions);
       res.status(200).json({
-        data: user,
+        data: userRes,
       });
     } catch (e) {
       next(e);
@@ -33,6 +35,7 @@ class AuthContoller {
   async forgotPassword(req, res, next) {
     try {
       const resetToken = await AuthService.forgotPassword(req.body.email);
+
       const resetURL = `${req.protocol}://${req.get(
         'host'
       )}/api/v1/auth/resetPassword/${resetToken}`;
@@ -42,7 +45,7 @@ class AuthContoller {
       await sendMail({
         email: req.body.email,
         subject: 'Your password reset token (valid for 10 min)',
-        message,
+        text: message,
       });
 
       res.status(200).json({
@@ -53,7 +56,20 @@ class AuthContoller {
     }
   }
 
-  async resetPassword(req, res, next) {}
+  async resetPassword(req, res, next) {
+    try {
+      const { resetToken } = req.params;
+      const { password } = req.body;
+      const jwt = await AuthService.resetPassword(resetToken, password);
+      const cookieOptions = AuthService.createCookieOptions();
+      res.cookie('jwt', jwt, cookieOptions);
+      res.status(200).json({
+        message: 'password was changed',
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 module.exports = new AuthContoller();
