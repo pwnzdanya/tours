@@ -1,11 +1,16 @@
+const { validationResult } = require('express-validator');
 const ReviewService = require('./review.service');
+const ApiError = require('../exceptions/api-error');
 
 class ReviewController {
   async create(req, res, next) {
-    const { tourId } = req.params;
-    const { id } = req.user;
-
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return next(ApiError.BadRequest('validation errors', errors.array()));
+      }
+      const { tourId } = req.params;
+      const { id } = req.user;
       const review = await ReviewService.create(req.body, tourId, id);
       res.status(201).json({
         data: review,

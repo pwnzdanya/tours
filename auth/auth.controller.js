@@ -1,10 +1,16 @@
+const { validationResult } = require('express-validator');
 const UserService = require('../user/user.service');
 const AuthService = require('./auth.service');
 const sendMail = require('../utlis/sendMail');
+const ApiError = require('../exceptions/api-error');
 
 class AuthController {
   async signUp(req, res, next) {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return next(ApiError.BadRequest('validation error', errors.array()));
+      }
       const newUser = await UserService.create(req.body);
       const userRes = UserService.buildUserResponse(newUser);
       const cookieOptions = AuthService.createCookieOptions();
@@ -34,6 +40,11 @@ class AuthController {
 
   async forgotPassword(req, res, next) {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return next(ApiError.BadRequest('validation error', errors.array()));
+      }
+
       const resetToken = await AuthService.forgotPassword(req.body.email);
 
       const resetURL = `${req.protocol}://${req.get(

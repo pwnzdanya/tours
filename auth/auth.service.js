@@ -75,11 +75,10 @@ class AuthService {
   }
 
   async resetPassword(token, password) {
-    console.log(token);
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-    console.log(hashedToken);
+
     const user = await User.findOne({ where: { passwordResetToken: hashedToken } });
-    console.log(user);
+
     if (!user) {
       throw ApiError.BadRequest();
     }
