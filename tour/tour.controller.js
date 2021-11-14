@@ -5,6 +5,7 @@ class TourController {
     const { query } = req;
     try {
       const tours = await TourService.getAll(query);
+
       res.status(200).json({
         data: tours,
         results: tours.length,

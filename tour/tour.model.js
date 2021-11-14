@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
+const Review = require('../review/review.model');
 
 const Tour = sequelize.define('Tour', {
   id: {
@@ -18,10 +19,6 @@ const Tour = sequelize.define('Tour', {
   },
   groupSize: {
     type: DataTypes.INTEGER,
-    nullable: false,
-  },
-  difficulty: {
-    type: DataTypes.STRING,
     nullable: false,
   },
   price: {
@@ -48,6 +45,12 @@ const Tour = sequelize.define('Tour', {
   startDates: {
     type: DataTypes.ARRAY(DataTypes.DATE),
   },
+  avgRating: {
+    type: DataTypes.INTEGER,
+  },
 });
+
+Tour.hasMany(Review);
+Review.belongsTo(Tour);
 
 module.exports = Tour;

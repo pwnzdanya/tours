@@ -2,7 +2,7 @@ const UserService = require('../user/user.service');
 const AuthService = require('./auth.service');
 const sendMail = require('../utlis/sendMail');
 
-class AuthContoller {
+class AuthController {
   async signUp(req, res, next) {
     try {
       const newUser = await UserService.create(req.body);
@@ -72,4 +72,4 @@ class AuthContoller {
   }
 }
 
-module.exports = new AuthContoller();
+module.exports = new AuthController();

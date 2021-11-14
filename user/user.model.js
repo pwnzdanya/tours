@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
+const Review = require('../review/review.model');
 
 const User = sequelize.define('user', {
   id: {
@@ -35,5 +36,8 @@ const User = sequelize.define('user', {
     defaultValue: 'user',
   },
 });
+
+User.hasMany(Review);
+Review.belongsTo(User);
 
 module.exports = User;

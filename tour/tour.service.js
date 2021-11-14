@@ -1,5 +1,6 @@
 const Tour = require('./tour.model');
 const ApiError = require('../exceptions/api-error');
+const Review = require('../review/review.model');
 
 class TourService {
   async create(tour) {
@@ -10,7 +11,6 @@ class TourService {
       name: tour.name,
       duration: tour.duration,
       groupSize: tour.groupSize,
-      difficulty: tour.difficulty,
       price: tour.price,
       priceDiscount: tour.priceDiscount,
       summary: tour.summary,
@@ -39,8 +39,7 @@ class TourService {
         offset,
       });
     }
-    this.promise = Tour.findAll({ limit, offset });
-    return this.promise;
+    return Tour.findAll({ limit, offset });
   }
 
   async getOne(id) {
@@ -52,6 +51,7 @@ class TourService {
     }
     const tour = await Tour.findOne({
       where: { id },
+      include: [{ model: Review }],
     });
     if (!tour) {
       throw ApiError.BadRequest('tour does not exist');
@@ -60,6 +60,7 @@ class TourService {
   }
 
   async update(tour) {
+    console.log(tour);
     const { id } = tour;
     if (!id || !tour) {
       throw ApiError.BadRequest('invalid id of tour');

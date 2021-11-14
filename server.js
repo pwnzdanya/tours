@@ -9,7 +9,7 @@ const sequelize = require('./db');
 const errorMiddleware = require('./middlewares/error');
 
 const app = express();
-app.use(xss());
+// app.use(xss());
 app.use(express.json());
 app.use(helmet());
 app.use(cookieParser());

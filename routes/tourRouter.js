@@ -1,5 +1,5 @@
 const express = require('express');
-const Tour = require('../tour/tour.contoller');
+const Tour = require('../tour/tour.controller');
 const auth = require('../middlewares/auth');
 const restrictTo = require('../middlewares/restrictTo');
 
